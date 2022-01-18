@@ -1,0 +1,8 @@
+.currency-selector {
+    border: none;
+    font-size: 1.5em;
+}
+
+.currency-selector:focus {
+    outline: none;
+}

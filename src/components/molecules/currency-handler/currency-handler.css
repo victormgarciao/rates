@@ -1,0 +1,9 @@
+.currency-handler {
+    padding: 20px;
+    margin: 15px 0;
+    background: #fff;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
