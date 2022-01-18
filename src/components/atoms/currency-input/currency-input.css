@@ -3,6 +3,7 @@
     border: none;
     font-size: 1.5em;
     box-decoration-break: unset;
+    cursor: default;
 }
 
 .currency-input::-webkit-outer-spin-button,
