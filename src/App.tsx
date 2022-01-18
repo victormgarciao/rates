@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { useRates } from './hooks/use-rates';
+import { Main } from './components/organisms/main/main'
 
 function App() {
 
@@ -8,13 +9,8 @@ function App() {
   console.log(rates);
 
   return (
-    <div className="App" data-testid="app">
-      <header className="App-header" data-testid="app-header">
-        THIS IS HEADER
-      </header>
-      <div className="main" data-testid="main">
-        THIS IS MAIN
-      </div>
+    <div className='App' data-testid='app'>
+        <Main />
     </div>
   );
 }
