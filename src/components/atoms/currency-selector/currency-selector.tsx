@@ -8,32 +8,26 @@ export enum Currencies {
 };
 
 export interface ICurrencySelectorProps {
-    defaultValue?: Currencies;
     onChangeSelector: (event: ChangeEvent<HTMLSelectElement>) => void;
-    disabledCurrency?: Currencies;
+    currencyValue?: Currencies;
 }
 
 export function CurrencySelector(props: ICurrencySelectorProps) {
     const {
-        defaultValue = Currencies.USD,
         onChangeSelector,
-        disabledCurrency = Currencies.EUR,
+        currencyValue = Currencies.USD,
     } = props;
-
-    function isDisabledCurrency(currency: Currencies) : boolean {
-        return disabledCurrency === currency;
-    }
 
     return (
         <select
             name='currency-selector'
             className='currency-selector'
-            defaultValue={defaultValue}
             onChange={onChangeSelector}
+            value={currencyValue}
         >
-            <option disabled={isDisabledCurrency(Currencies.GBP)}>{Currencies.GBP}</option>
-            <option disabled={isDisabledCurrency(Currencies.EUR)}>{Currencies.EUR}</option>
-            <option disabled={isDisabledCurrency(Currencies.USD)}>{Currencies.USD}</option>
+            <option>{Currencies.GBP}</option>
+            <option>{Currencies.EUR}</option>
+            <option>{Currencies.USD}</option>
         </select>
     );
 }

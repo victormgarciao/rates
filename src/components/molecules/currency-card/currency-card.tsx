@@ -9,9 +9,8 @@ export enum CurrencyCardType {
     BOTTOM = 'BOTTOM',
 };
 interface ICurrencyCardProps {
-    defaultSelectorValue?: Currencies;
+    currencyValue?: Currencies;
     onChangeSelector: (event: ChangeEvent<HTMLSelectElement>) => void
-    disabledCurrency?: Currencies;
     onChangeAmount: (event: ChangeEvent<HTMLInputElement>) => void;
     currencyCardType? : CurrencyCardType;
     amountValue?: string;
@@ -22,17 +21,17 @@ interface ICurrencyCardProps {
 
 export function CurrencyCard(props: ICurrencyCardProps) {
     const {
-        defaultSelectorValue,
         onChangeSelector,
-        disabledCurrency,
         onChangeAmount,
         currencyCardType = CurrencyCardType.TOP,
         amountValue,
         handleActiveCard,
+        currencyValue,
     } = props;
 
     function setActive(event: MouseEvent<HTMLDivElement>): void {
         event.preventDefault();
+        console.log({currencyCardType})
         handleActiveCard(currencyCardType);
     }
 
@@ -42,9 +41,8 @@ export function CurrencyCard(props: ICurrencyCardProps) {
             onClick={setActive}
         >
             <CurrencySelector
-                defaultValue={defaultSelectorValue}
+                currencyValue={currencyValue}
                 onChangeSelector={onChangeSelector}
-                disabledCurrency={disabledCurrency}
             />
             <CurrencyInput
                 onChangeAmount={onChangeAmount}

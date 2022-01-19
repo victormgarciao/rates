@@ -3,7 +3,7 @@ import './main.css';
 import { CurrencyCard, CurrencyCardType } from "../../molecules/currency-card/currency-card";
 import { Header } from "../../atoms/header/header";
 import { Currencies } from '../../atoms/currency-selector/currency-selector';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectRatesValues } from '../../../redux/slices/rates.slice';
 
@@ -23,19 +23,40 @@ export function Main() {
         return (amount * times).toFixed(2);
     }
 
-    function onChangeTopCurrency(event: ChangeEvent<HTMLSelectElement>) : void {
-        event.preventDefault();
-        setTopCurrency(event.target.value as Currencies);
-    }
-
-    function onChangeBotCurrency(event: ChangeEvent<HTMLSelectElement>) : void {
-        event.preventDefault();
-        setBotCurrency(event.target.value as Currencies);
-    }
-
     function isTopCardActive() : boolean {
         return activeCard === CurrencyCardType.TOP;
     }
+
+    function isSameCurrencies(currency1: Currencies) : (a: Currencies) => boolean {
+        return function checkOtherCurrency(currency2: Currencies) : boolean {
+            return currency1 === currency2;
+        }
+    }
+
+    function handleNewCurrencySelected(event: ChangeEvent<HTMLSelectElement>) : void {
+        event.preventDefault();
+        const newCurrencySelected = event.target.value as Currencies;
+        const isSameThanNewCurrency = isSameCurrencies(newCurrencySelected);
+
+        if (isTopCardActive()) {
+            if (isSameThanNewCurrency(botCurrency)) {
+                setBotCurrency(topCurrency);
+            }
+            setTopCurrency(newCurrencySelected);
+        } else {
+            if (isSameThanNewCurrency(topCurrency)) {
+                setTopCurrency(botCurrency);
+            }
+            setBotCurrency(newCurrencySelected);
+        }
+    }
+
+    useEffect(() => {
+        const amountToSend = isTopCardActive() ? topAmount : botAmount;
+        if(amountToSend !== '') {
+            handleNewAmountValues(amountToSend)
+        }
+    }, [topCurrency, botCurrency]);
 
     function replacingDotForComma(value: string) : string {
         return value.replace('.', ',');
@@ -55,13 +76,23 @@ export function Main() {
         setBotAmount('');
     }
 
-    function handleNewAmountValues(newValue : number) : void {
+    function handleNewAmountValues(newValue : string) : void {
+        if (newValue === '') return;
+        const newValueAsPositiveNumber = Math.abs(Number(newValue.replace(',', '.')));
         if (isTopCardActive()) {
-            setTopAmount(replacingDotForComma('-' + newValue));
-            setBotAmount(replacingDotForComma('+' + getRateCalculation(topCurrency, botCurrency, newValue)));
+            setTopAmount(replacingDotForComma('-' + newValueAsPositiveNumber));
+            setBotAmount(
+                replacingDotForComma(
+                    '+' + getRateCalculation(topCurrency, botCurrency, newValueAsPositiveNumber)
+                )
+            );
         } else {
-            setBotAmount(replacingDotForComma('-' + newValue));
-            setTopAmount(replacingDotForComma('+' + getRateCalculation(botCurrency, topCurrency, newValue)));
+            setBotAmount(replacingDotForComma('-' + newValueAsPositiveNumber));
+            setTopAmount(
+                replacingDotForComma(
+                    '+' + getRateCalculation(botCurrency, topCurrency, newValueAsPositiveNumber)
+                )
+            );
         }
     }
 
@@ -85,63 +116,40 @@ export function Main() {
         return true;
     }
 
-    function onChangeAmount(event: ChangeEvent<HTMLInputElement>) : void {
+    function handleNewAmount(event: ChangeEvent<HTMLInputElement>) : void {
         event.preventDefault();
         const newValue : string = event.target.value;
 
         if (isNewValueOk(newValue)) {
-            const newValueAsPositiveNumber = Math.abs(Number(newValue.replace(',', '.')));
-    
             resetAmountValues();
-            handleNewAmountValues(newValueAsPositiveNumber);
-        }
-    }
-
-    function isTopCard(currencyCardType: CurrencyCardType) : boolean {
-        return currencyCardType === CurrencyCardType.TOP
-    }
-
-    function handleAmountsOnSwapCard(newCurrencyCardType: CurrencyCardType) : void {
-        if (isTopCard(newCurrencyCardType)) {
-            setTopAmount('-' + topAmount.slice(1));
-            setBotAmount('+' + botAmount.slice(1));
-        } 
-        else {
-            setTopAmount('+' + topAmount.slice(1));
-            setBotAmount('-' + botAmount.slice(1));
+            handleNewAmountValues(newValue);
         }
     }
 
     function handleActiveCard(newCurrencyCardType : CurrencyCardType): void {
-        const hasNotAmount = topAmount === '';
         const isAlreadyThisCard = activeCard === newCurrencyCardType;
-
-        if (hasNotAmount || isAlreadyThisCard) return;
-
+        if (isAlreadyThisCard) return;
         setActiveCard(newCurrencyCardType);
-        handleAmountsOnSwapCard(newCurrencyCardType);
     }
 
     return (
         <div className='main'>
             <Header />
             <CurrencyCard
-                defaultSelectorValue={topCurrency}
-                onChangeSelector={onChangeTopCurrency}
-                disabledCurrency={botCurrency}
-                onChangeAmount={onChangeAmount}
-                currencyCardType={CurrencyCardType.TOP}
+                currencyValue={topCurrency}
                 amountValue={topAmount}
+                currencyCardType={CurrencyCardType.TOP}
                 handleActiveCard={handleActiveCard}
+                onChangeSelector={handleNewCurrencySelected}
+                onChangeAmount={handleNewAmount}
             />
             <CurrencyCard
-                defaultSelectorValue={botCurrency}
-                onChangeSelector={onChangeBotCurrency}
-                disabledCurrency={topCurrency}
-                onChangeAmount={onChangeAmount}
-                currencyCardType={CurrencyCardType.BOTTOM}
+                currencyValue={botCurrency}
                 amountValue={botAmount}
+                currencyCardType={CurrencyCardType.BOTTOM}
                 handleActiveCard={handleActiveCard}
+                onChangeSelector={handleNewCurrencySelected}
+                onChangeAmount={handleNewAmount}
             />
         </div>
     );
