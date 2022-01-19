@@ -3,19 +3,20 @@ import './currency-input.css'
 
 interface ICurrencySelectorProps {
     onChangeAmount: (event: ChangeEvent<HTMLInputElement>) => void;
-    amountValue?: number;
+    amountValue?: string;
 }
 
 export function CurrencyInput(props: ICurrencySelectorProps) {
     const { onChangeAmount, amountValue } = props;
 
     return (
-        <input 
-            type='number'
+        <input
+            type='text'
+            inputMode='numeric'
             className='currency-input'
             placeholder='0'
-            onChange={onChangeAmount}
             value={amountValue || ''}
+            onChange={onChangeAmount}
         />
     );
 }

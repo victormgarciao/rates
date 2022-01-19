@@ -1,44 +1,44 @@
-import { ChangeEvent, Dispatch, MouseEvent, MouseEventHandler, SetStateAction } from "react";
+import { ChangeEvent, MouseEvent } from "react";
 import { CurrencyInput } from "../../atoms/currency-input/currency-input";
-import { Currencies, CurrencySelector, ICurrencySelectorProps } from "../../atoms/currency-selector/currency-selector";
+import { Currencies, CurrencySelector } from "../../atoms/currency-selector/currency-selector";
 
-import './currency-handler.css';
+import './currency-card.css';
 
-export enum CurrencyHandlerType {
+export enum CurrencyCardType {
     TOP = 'TOP',
     BOTTOM = 'BOTTOM',
 };
-interface ICurrencyHandlerProps {
+interface ICurrencyCardProps {
     defaultSelectorValue?: Currencies;
     onChangeSelector: (event: ChangeEvent<HTMLSelectElement>) => void
     disabledCurrency?: Currencies;
     onChangeAmount: (event: ChangeEvent<HTMLInputElement>) => void;
-    currencyHandlerType? : CurrencyHandlerType;
-    setActiveHandler: Dispatch<SetStateAction<CurrencyHandlerType>>;
-    amountValue?: number;
+    currencyCardType? : CurrencyCardType;
+    amountValue?: string;
+    handleActiveCard: (newCurrencyCardType : CurrencyCardType) => void;
 }
 
 
 
-export function CurrencyHandler(props: ICurrencyHandlerProps) {
+export function CurrencyCard(props: ICurrencyCardProps) {
     const {
         defaultSelectorValue,
         onChangeSelector,
         disabledCurrency,
         onChangeAmount,
-        currencyHandlerType = CurrencyHandlerType.TOP,
-        setActiveHandler,
+        currencyCardType = CurrencyCardType.TOP,
         amountValue,
+        handleActiveCard,
     } = props;
 
     function setActive(event: MouseEvent<HTMLDivElement>): void {
         event.preventDefault();
-        setActiveHandler(currencyHandlerType);
+        handleActiveCard(currencyCardType);
     }
 
     return (
         <div
-            className={`currency-handler type-${currencyHandlerType}`}
+            className='currency-card'
             onClick={setActive}
         >
             <CurrencySelector
@@ -46,7 +46,10 @@ export function CurrencyHandler(props: ICurrencyHandlerProps) {
                 onChangeSelector={onChangeSelector}
                 disabledCurrency={disabledCurrency}
             />
-            <CurrencyInput onChangeAmount={onChangeAmount} amountValue={amountValue} />
+            <CurrencyInput
+                onChangeAmount={onChangeAmount}
+                amountValue={amountValue}
+            />
         </div>
     );
 }
