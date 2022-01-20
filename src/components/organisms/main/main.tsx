@@ -28,17 +28,19 @@ export function Main() {
     }
 
 
-    function replacingDotForComma(value: string) : string {
+    function replaceDotForCommaOf(value: string) : string {
         return value.replace('.', ',');
     }
 
-    function hasEndingDotOrComma(newValue : string) : boolean {
+    function hasEndedWithDotOrComma(newValue : string) : boolean {
         return newValue.endsWith('.') || newValue.endsWith(',');
     }
 
     function handleEndingDot(valueWithDotOrComma : string, isTop: boolean) : void {
-        if (isTop) { setTopAmount(replacingDotForComma(valueWithDotOrComma)); } 
-        else { setBotAmount(replacingDotForComma(valueWithDotOrComma)); }
+        const valueFormatted : string = replaceDotForCommaOf(valueWithDotOrComma);
+
+        if (isTop) { setTopAmount(valueFormatted); } 
+        else { setBotAmount(valueFormatted); }
     }
 
     function resetAmountValues() : void {
@@ -51,15 +53,15 @@ export function Main() {
 
         if (isNotValidValue) return false;
 
-        const isLastDigitNotANumber : boolean =
+        const isOneCharAndNotNumber : boolean =
             areEqual(value, '+') || areEqual(value, '-') || areEqual(value, '.') || areEqual(value, ',');
 
-        if (isLastDigitNotANumber) {
+        if (isOneCharAndNotNumber) {
             resetAmountValues();
             return false;
         }
 
-        if (hasEndingDotOrComma(value)) {
+        if (hasEndedWithDotOrComma(value)) {
             handleEndingDot(value, isTop);
             return false;
         }
@@ -67,7 +69,7 @@ export function Main() {
         return true;
     }
 
-    function handleCta(event: MouseEvent<HTMLElement>) : void {
+    function swapCurrencyCardActive(event: MouseEvent<HTMLElement>) : void {
         event.preventDefault();
 
         if (isTopCardActive()) setActiveCard(CurrencyCardType.BOTTOM)
@@ -77,16 +79,16 @@ export function Main() {
     function handleAmounts(value: string, isTop: boolean) : void {
         if (isNewValueOk(value, isTop)) {
             resetAmountValues();
-            const numbered : number = Math.abs(Number(value.replace(',', '.')));
+            const positiveNumberedValue : number = Math.abs(Number(value.replace(',', '.')));
 
             if (isTop) {
-                const otherCurrencyCalculated : string = getRateCalculation(topCurrency, botCurrency, numbered);
-                setTopAmount(replacingDotForComma(isTopCardActive() ? `-${numbered}` : `+${numbered}`));
-                setBotAmount(replacingDotForComma(isTopCardActive() ? `+${otherCurrencyCalculated}` : `-${otherCurrencyCalculated}`));
+                const otherCurrencyCalculated : string = getRateCalculation(topCurrency, botCurrency, positiveNumberedValue);
+                setTopAmount(replaceDotForCommaOf(isTopCardActive() ? `-${positiveNumberedValue}` : `+${positiveNumberedValue}`));
+                setBotAmount(replaceDotForCommaOf(isTopCardActive() ? `+${otherCurrencyCalculated}` : `-${otherCurrencyCalculated}`));
             } else {
-                const otherCurrencyCalculated : string = getRateCalculation(botCurrency, topCurrency, numbered);
-                setBotAmount(replacingDotForComma(isTopCardActive() ? `+${numbered}` : `-${numbered}`));
-                setTopAmount(replacingDotForComma(isTopCardActive() ? `-${otherCurrencyCalculated}` : `+${otherCurrencyCalculated}`));
+                const otherCurrencyCalculated : string = getRateCalculation(botCurrency, topCurrency, positiveNumberedValue);
+                setBotAmount(replaceDotForCommaOf(isTopCardActive() ? `+${positiveNumberedValue}` : `-${positiveNumberedValue}`));
+                setTopAmount(replaceDotForCommaOf(isTopCardActive() ? `-${otherCurrencyCalculated}` : `+${otherCurrencyCalculated}`));
             }
         }
     }
@@ -155,7 +157,7 @@ export function Main() {
                 />
                 <button
                     className={`cta-transaction-direction ${isTopCardActive() ? 'active' : ''}`}
-                    onClick={handleCta}
+                    onClick={swapCurrencyCardActive}
                 >
                     <i className='fa fa-long-arrow-up' aria-hidden='true' />
                 </button>
