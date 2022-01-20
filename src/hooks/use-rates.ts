@@ -1,41 +1,24 @@
-import axios, { AxiosResponse } from "axios";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { IRates, selectRatesValues, setRates } from "../redux/slices/rates.slice";
+import { useSelector } from 'react-redux';
+import { Currencies } from '../redux/slices/currency-selectors.slices';
+import { IRates, selectRatesValues } from '../redux/slices/rates.slice';
 
 
-async function getRatesRequest(): Promise<IRates> {
-    return axios
-        .get('https://openexchangerates.org/api/latest.json?app_id=a9caea7b55244051b167a83287ef31bd')
-        .then((rateRequest : AxiosResponse): IRates => rateRequest.data.rates);
+interface IUseRatesResponse {
+    rates: IRates,
+    getRateCalculation: (a: Currencies, b: Currencies, d: number) => string
 }
 
-export function useRates(): IRates {
+
+export function useRates(): IUseRatesResponse {
     const rates = useSelector(selectRatesValues);
-    const dispatch = useDispatch();
-
     console.log(rates);
-
-    function dispatchSetRates(rates: IRates) : void {
-        dispatch(setRates(rates));
+    
+    function getRateCalculation(fromCurrency: Currencies, toCurrency: Currencies, amount: number) : string {
+        const fromRate = rates[fromCurrency];
+        const toRate = rates[toCurrency];
+        const times = fromRate / toRate;
+        return Number((amount * times).toFixed(2)).toString(); // to avoid .00
     }
 
-    function setRatesToStore() : void {
-        getRatesRequest().then(dispatchSetRates);
-    }
-
-    useEffect(() => {
-        setRatesToStore();
-        const intervalId = setInterval(
-            () => setRatesToStore(),
-            10000,
-        );
-
-        return function cleanup() {
-            clearInterval(intervalId);
-        };
-
-    }, []);
-
-    return rates;
+    return { rates, getRateCalculation };
 }

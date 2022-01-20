@@ -1,11 +1,6 @@
 import { ChangeEvent } from 'react';
 import './currency-selector.css';
-
-export enum Currencies {
-    GBP = 'GBP',
-    USD = 'USD',
-    EUR = 'EUR',
-};
+import { Currencies } from '../../../redux/slices/currency-selectors.slices';
 
 export interface ICurrencySelectorProps {
     onChangeSelector: (event: ChangeEvent<HTMLSelectElement>) => void;

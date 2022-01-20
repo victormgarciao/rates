@@ -1,13 +1,11 @@
 import { ChangeEvent } from "react";
 import { CurrencyInput } from "../../atoms/currency-input/currency-input";
-import { Currencies, CurrencySelector } from "../../atoms/currency-selector/currency-selector";
+import { CurrencySelector } from "../../atoms/currency-selector/currency-selector";
+import { CurrencyCardType } from '../../../redux/slices/currency-cards.slice';
+import { Currencies } from "../../../redux/slices/currency-selectors.slices";
 
 import './currency-card.css';
 
-export enum CurrencyCardType {
-    TOP = 'TOP',
-    BOTTOM = 'BOTTOM',
-};
 interface ICurrencyCardProps {
     currencyValue?: Currencies;
     onChangeSelector: (event: ChangeEvent<HTMLSelectElement>) => void

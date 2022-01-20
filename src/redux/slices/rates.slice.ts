@@ -5,12 +5,12 @@ export interface IRates {
     [key: string]: number;
 }
 
-interface RatesState {
-    value: IRates
+interface IRatesState {
+    data: IRates
 }
 
-const initialState: RatesState = {
-    value: {},
+const initialState: IRatesState = {
+    data: {},
 }
 
 export const ratesSlice = createSlice({
@@ -18,12 +18,12 @@ export const ratesSlice = createSlice({
     initialState,
     reducers:{
         setRates: (state, action: PayloadAction<IRates>) => {
-            state.value = action.payload;
+            state.data = action.payload;
         },
     },
 });
 
-export const selectRatesValues = (state: RootState) => state.rates.value;
+export const selectRatesValues = (state: RootState) => state.rates.data;
 
 export const { setRates } = ratesSlice.actions;
 
