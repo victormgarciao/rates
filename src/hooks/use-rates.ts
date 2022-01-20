@@ -14,6 +14,8 @@ export function useRates(): IRates {
     const rates = useSelector(selectRatesValues);
     const dispatch = useDispatch();
 
+    console.log(rates);
+
     function dispatchSetRates(rates: IRates) : void {
         dispatch(setRates(rates));
     }

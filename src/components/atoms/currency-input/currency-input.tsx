@@ -1,9 +1,20 @@
-import { ChangeEvent } from 'react'
+import { eq as areEqual } from 'lodash';
+import { ChangeEvent, KeyboardEvent } from 'react'
 import './currency-input.css'
 
 interface ICurrencySelectorProps {
     onChangeAmount: (event: ChangeEvent<HTMLInputElement>) => void;
     amountValue?: string;
+}
+
+function preventDeleteNotRemovableChars(event: KeyboardEvent<HTMLInputElement>) : void {
+    const start: number = event.currentTarget.selectionStart || 0;
+    const charBefore : string = event.currentTarget.value[start-1]
+    const isNotRemovableChar: boolean = areEqual(charBefore, '+') || areEqual(charBefore, '-');
+    if (event.key === 'Backspace' && isNotRemovableChar) {
+        event.preventDefault();
+        return;
+    }
 }
 
 export function CurrencyInput(props: ICurrencySelectorProps) {
@@ -17,6 +28,7 @@ export function CurrencyInput(props: ICurrencySelectorProps) {
             placeholder='0'
             value={amountValue || ''}
             onChange={onChangeAmount}
+            onKeyDown={preventDeleteNotRemovableChars}
         />
     );
 }

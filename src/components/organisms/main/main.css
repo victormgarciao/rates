@@ -1,3 +1,39 @@
-.container {
+.main {
     min-width: 300px;
+}
+
+.main .cardsWrapper {
+    position: relative;
+}
+
+.main button {
+    padding: 10px;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 4px solid #eee;
+    transition: border 0.2s, width 0.2s, height 0.2s;
+}
+
+.main button:hover { 
+    border: 2px solid #eee;
+    width: 50px;
+    height: 50px;
+}
+
+.main button {
+    color: #1e90ff;
+}
+
+.main button.active i {
+    transform: rotate(180deg);
+    transform-origin: 50% 37%;
 }

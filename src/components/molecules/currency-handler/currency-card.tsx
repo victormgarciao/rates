@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEvent } from "react";
+import { ChangeEvent } from "react";
 import { CurrencyInput } from "../../atoms/currency-input/currency-input";
 import { Currencies, CurrencySelector } from "../../atoms/currency-selector/currency-selector";
 
@@ -14,10 +14,7 @@ interface ICurrencyCardProps {
     onChangeAmount: (event: ChangeEvent<HTMLInputElement>) => void;
     currencyCardType? : CurrencyCardType;
     amountValue?: string;
-    handleActiveCard: (newCurrencyCardType : CurrencyCardType) => void;
 }
-
-
 
 export function CurrencyCard(props: ICurrencyCardProps) {
     const {
@@ -25,20 +22,13 @@ export function CurrencyCard(props: ICurrencyCardProps) {
         onChangeAmount,
         currencyCardType = CurrencyCardType.TOP,
         amountValue,
-        handleActiveCard,
         currencyValue,
     } = props;
 
-    function setActive(event: MouseEvent<HTMLDivElement>): void {
-        event.preventDefault();
-        console.log({currencyCardType})
-        handleActiveCard(currencyCardType);
-    }
 
     return (
         <div
-            className='currency-card'
-            onClick={setActive}
+            className={`currency-card ${currencyCardType}-card`}
         >
             <CurrencySelector
                 currencyValue={currencyValue}
