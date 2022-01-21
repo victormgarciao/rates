@@ -1,6 +1,6 @@
 import { eq as areEqual} from "lodash";
 
-export function isAmountNotNumber(value: string) : boolean {
+export function isLastDigitNotNumber(value: string) : boolean {
     return( 
         areEqual(value, '+')
         || areEqual(value, '-')

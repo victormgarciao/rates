@@ -6,7 +6,7 @@ import { selectRatesValues } from '../redux/slices/rates.slice';
 import { Currencies, selectBotCurrency, selectTopCurrency } from '../redux/slices/currency-selectors.slices';
 import { selectActiveCard, selectIsTopActiveCard } from '../redux/slices/currency-cards.slice';
 import { hasEndedWithDotOrComma } from '../utils/hasEndedWithDotOrComma/hasEndedWithDotOrComma';
-import { isAmountNotNumber } from '../utils/isAmountNotNumber/isAmountNotNumber';
+import { isLastDigitNotNumber } from '../utils/isLastDigitNotNumber/isLastDigitNotNumber';
 import { isRightFormatAmount } from '../utils/isRightFormatAmount/isRightFormatAmount';
 
 interface IUseAmountsResponse {
@@ -41,7 +41,7 @@ export function useAmounts() : IUseAmountsResponse {
     function isNewAmountValid(amount : string, isComingFromTopCard: boolean) : boolean {
         if (!isRightFormatAmount(amount)) return false;
 
-        if (isAmountNotNumber(amount)) {
+        if (isLastDigitNotNumber(amount)) {
             dispatch(resetAmounts());
             return false;
         }

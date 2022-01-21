@@ -12,7 +12,7 @@ export function Main() {
     const { topCurrency, botCurrency, onNewTopCurrency, onNewBotCurrency } = useCurrencyCardsSelector();
  
     return (
-        <div className='main'>
+        <div className='main' data-testid='main'>
             <Header />
             <div className="cardsWrapper">
                 <CurrencyCard

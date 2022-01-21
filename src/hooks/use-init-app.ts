@@ -23,13 +23,13 @@ export function useInitApp(): void {
 
     function dispatchSetRates(rates: IRates) : void {
         const ratesWithDolarRate = { ...rates, USD: 1 };
-        console.log(ratesWithDolarRate);
+        // console.log(ratesWithDolarRate);
         dispatch(setRates(ratesWithDolarRate));
     }
 
 
     function setRatesToStore() : void {
-        console.log('YOU HAVE CALLED THE API');
+        // console.log('YOU HAVE CALLED THE API');
         // getRatesRequest().then(dispatchSetRates); // I AM MOCKING VALUE TO NOT GET THE LIMIT CALLS OF THE API
         dispatchSetRates(mockRates);
     }

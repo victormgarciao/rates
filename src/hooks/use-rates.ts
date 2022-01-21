@@ -10,6 +10,6 @@ interface IUseRatesResponse {
 
 export function useRates(): IUseRatesResponse {
     const rates = useSelector(selectRatesValues);
-    console.log(rates);
+    // console.log(rates);
     return { rates };
 }
