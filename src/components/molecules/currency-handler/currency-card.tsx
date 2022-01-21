@@ -1,8 +1,8 @@
-import { ChangeEvent } from "react";
-import { CurrencyInput } from "../../atoms/currency-input/currency-input";
-import { CurrencySelector } from "../../atoms/currency-selector/currency-selector";
+import { ChangeEvent } from 'react';
 import { CurrencyCardType } from '../../../redux/slices/currency-cards.slice';
-import { Currencies } from "../../../redux/slices/currency-selectors.slices";
+import { Currencies } from '../../../redux/slices/currency-selectors.slices';
+import { CurrencyInput } from '../../atoms/currency-input/currency-input';
+import { CurrencySelector } from '../../atoms/currency-selector/currency-selector';
 
 import './currency-card.css';
 
@@ -14,6 +14,7 @@ interface ICurrencyCardProps {
     amountValue?: string;
 }
 
+
 export function CurrencyCard(props: ICurrencyCardProps) {
     const {
         onChangeSelector,
@@ -22,7 +23,6 @@ export function CurrencyCard(props: ICurrencyCardProps) {
         amountValue,
         currencyValue,
     } = props;
-
 
     return (
         <div

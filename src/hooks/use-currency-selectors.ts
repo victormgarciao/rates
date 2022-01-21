@@ -1,7 +1,8 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Currencies, selectTopCurrency, selectBotCurrency, setTopCurrency, setBotCurrency } from "../redux/slices/currency-selectors.slices";
-import { eq as areEqual } from "lodash";
-import { ChangeEvent } from "react";
+import { ChangeEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { eq as areEqual } from 'lodash';
+import { Currencies, selectTopCurrency, selectBotCurrency, setTopCurrency, setBotCurrency } from '../redux/slices/currency-selectors.slices';
+
 
 interface IUseActiveCardResponse {
     topCurrency: Currencies,
@@ -10,18 +11,12 @@ interface IUseActiveCardResponse {
     onNewBotCurrency: (e: ChangeEvent<HTMLSelectElement>) => void
 }
 
+
 export function useCurrencyCardsSelector() : IUseActiveCardResponse {
     const dispatch = useDispatch();
     const topCurrency = useSelector(selectTopCurrency);
     const botCurrency = useSelector(selectBotCurrency);
 
-    function dispatchSetTopAmount (newTopCurrency: Currencies): void {
-        dispatch(setTopCurrency(newTopCurrency))
-    }
-
-    function dispatchSetBotAmount (newBotCurrency: Currencies): void {
-        dispatch(setBotCurrency(newBotCurrency))
-    }
 
     function isSameCurrencies(currency1: Currencies) : (a: Currencies) => boolean {
         return function checkOtherCurrency(currency2: Currencies) : boolean {
@@ -29,30 +24,35 @@ export function useCurrencyCardsSelector() : IUseActiveCardResponse {
         }
     }
 
-    function handleCurrencies( currency: Currencies, isTop: boolean): void {
+
+    function handleCurrencies( currency: Currencies, isTopSelector: boolean): void {
         const isNewCurrencyEqualThan = isSameCurrencies(currency);
-        if (isTop) {
-            if (isNewCurrencyEqualThan(botCurrency)) dispatchSetBotAmount(topCurrency);
-            dispatchSetTopAmount(currency);
+
+        if (isTopSelector) {
+            if (isNewCurrencyEqualThan(botCurrency)) dispatch(setBotCurrency(topCurrency));
+            dispatch(setTopCurrency(currency));
         } else {
-            if (isNewCurrencyEqualThan(topCurrency)) dispatchSetTopAmount(botCurrency);
-            dispatchSetBotAmount(currency);
+            if (isNewCurrencyEqualThan(topCurrency)) dispatch(setTopCurrency(botCurrency));
+            dispatch(setBotCurrency(currency));
         }
     }
+
 
     function onNewTopCurrency(event: ChangeEvent<HTMLSelectElement>) : void {
         event.preventDefault();
         const newCurrencySelected = event.target.value as Currencies;
-        const isTop = true;
-        handleCurrencies(newCurrencySelected, isTop);
+        const isTopSelector = true;
+        handleCurrencies(newCurrencySelected, isTopSelector);
     }
+
 
     function onNewBotCurrency(event: ChangeEvent<HTMLSelectElement>) : void {
         event.preventDefault();
         const newCurrencySelected = event.target.value as Currencies;
-        const isTop = false;
-        handleCurrencies(newCurrencySelected, isTop);;
+        const isTopSelector = false;
+        handleCurrencies(newCurrencySelected, isTopSelector);;
     }
+
 
     return {
         botCurrency,

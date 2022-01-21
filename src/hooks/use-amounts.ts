@@ -1,12 +1,13 @@
+import { ChangeEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { eq as areEqual } from 'lodash';
-import { selectBotAmount, selectTopAmount, setBotAmount, setTopAmount } from '../redux/slices/amounts.slice';
+import { selectBotAmount, selectTopAmount, setBotAmountAsString, setBotAmountAsNumber, setTopAmountAsString, setTopAmountAsNumber, resetAmounts } from '../redux/slices/amounts.slice';
 import { selectRatesValues } from '../redux/slices/rates.slice';
 import { Currencies, selectBotCurrency, selectTopCurrency } from '../redux/slices/currency-selectors.slices';
 import { selectActiveCard, selectIsTopActiveCard } from '../redux/slices/currency-cards.slice';
-import { ChangeEvent, useEffect } from 'react';
 import { hasEndedWithDotOrComma } from '../utils/hasEndedWithDotOrComma/hasEndedWithDotOrComma';
-import { replaceDotForCommaOf } from '../utils/replaceDotForCommaOf/replaceDotForCommaOf';
+import { isAmountNotNumber } from '../utils/isAmountNotNumber/isAmountNotNumber';
+import { isRightFormatAmount } from '../utils/isRightFormatAmount/isRightFormatAmount';
 
 interface IUseAmountsResponse {
     topAmount: string,
@@ -15,8 +16,10 @@ interface IUseAmountsResponse {
     onNewBotAmount: (e: ChangeEvent<HTMLInputElement>) => void,
 }
 
+
 export function useAmounts() : IUseAmountsResponse {
     const dispatch = useDispatch();
+    
     const topAmount = useSelector(selectTopAmount);
     const botAmount = useSelector(selectBotAmount);
     const rates = useSelector(selectRatesValues);
@@ -25,94 +28,82 @@ export function useAmounts() : IUseAmountsResponse {
     const isTopCardActive = useSelector(selectIsTopActiveCard);
     const activeCard = useSelector(selectActiveCard);
 
-    function dispatchSetTopAmount (newAmount: string): void {
-        dispatch(setTopAmount(newAmount));
-    }
 
-    function dispatchSetBotAmount (newAmount: string): void {
-        dispatch(setBotAmount(newAmount));
-    }
-
-    function getRateCalculation(fromCurrency: Currencies, toCurrency: Currencies, amount: number) : string {
+    function getRateCalculation(fromCurrency: Currencies, toCurrency: Currencies, amount: number) : number {
         const fromRate = rates[fromCurrency];
         const toRate = rates[toCurrency];
         const times = fromRate / toRate;
-        return Number((amount * times).toFixed(2)).toString(); // to avoid .00
+        const fixedAmountCalculated = (amount * times).toFixed(2)
+        return Number(fixedAmountCalculated); // to avoid .00
     }
 
-    function handleEndingDot(valueWithDotOrComma : string, isTop: boolean) : void {
-        const valueFormatted : string = replaceDotForCommaOf(valueWithDotOrComma);
 
-        if (isTop) { dispatchSetTopAmount(valueFormatted); } 
-        else { dispatchSetBotAmount(valueFormatted); }
-    }
+    function isNewAmountValid(amount : string, isComingFromTopCard: boolean) : boolean {
+        if (!isRightFormatAmount(amount)) return false;
 
-    function resetAmountValues() : void {
-        dispatchSetTopAmount('');
-        dispatchSetBotAmount('');
-    }
-
-    function isNewAmountValid(value : string, isTop: boolean) : boolean {
-        const isNotValidValue : boolean = !/^[-+]?[0-9]*([\.,][0-9]*)?$/.test(value);
-
-        if (isNotValidValue) return false;
-
-        const isOneCharAndNotNumber : boolean =
-            areEqual(value, '+') || areEqual(value, '-') || areEqual(value, '.') || areEqual(value, ',');
-
-        if (isOneCharAndNotNumber) {
-            resetAmountValues();
+        if (isAmountNotNumber(amount)) {
+            dispatch(resetAmounts());
             return false;
         }
 
-        if (hasEndedWithDotOrComma(value)) {
-            handleEndingDot(value, isTop);
+        if (hasEndedWithDotOrComma(amount)) {
+            if (isComingFromTopCard) dispatch(setTopAmountAsString(amount));
+            else dispatch(setBotAmountAsString(amount));
+
             return false;
         }
 
         return true;
     }
 
-    function handleAmounts(value: string, isTop: boolean) : void {
-        if (isNewAmountValid(value, isTop)) {
-            resetAmountValues();
-            const positiveNumberedValue : number = Math.abs(Number(value.replace(',', '.')));
 
-            if (isTop) {
-                const otherCurrencyCalculated : string = getRateCalculation(
-                    topCurrency, 
-                    botCurrency, 
-                    positiveNumberedValue,
-                );
+    function handleAmounts(amount: string, isComingFromTopCard: boolean) : void {
+        if (isNewAmountValid(amount, isComingFromTopCard)) {
+            dispatch(resetAmounts());
+            const positiveAmont : number = Math.abs(Number(amount.replace(',', '.')));
 
-                dispatchSetTopAmount(replaceDotForCommaOf(isTopCardActive ? `-${positiveNumberedValue}` : `+${positiveNumberedValue}`));
-                dispatchSetBotAmount(replaceDotForCommaOf(isTopCardActive ? `+${otherCurrencyCalculated}` : `-${otherCurrencyCalculated}`));
+            if (isComingFromTopCard) {
+                const otherCurrencyCalculated : number = 
+                    getRateCalculation(
+                        topCurrency, 
+                        botCurrency, 
+                        positiveAmont,
+                    )
+                ;
+
+                dispatch(setTopAmountAsNumber(isTopCardActive ? -positiveAmont : positiveAmont));
+                dispatch(setBotAmountAsNumber(isTopCardActive ? otherCurrencyCalculated : -otherCurrencyCalculated));
             } else {
-                const otherCurrencyCalculated : string = getRateCalculation(
-                    botCurrency, 
-                    topCurrency, 
-                    positiveNumberedValue,
-                );
+                const otherCurrencyCalculated : number =
+                    getRateCalculation(
+                        botCurrency, 
+                        topCurrency, 
+                        positiveAmont,
+                    )
+                ;
 
-                dispatchSetBotAmount(replaceDotForCommaOf(isTopCardActive ? `+${positiveNumberedValue}` : `-${positiveNumberedValue}`));
-                dispatchSetTopAmount(replaceDotForCommaOf(isTopCardActive ? `-${otherCurrencyCalculated}` : `+${otherCurrencyCalculated}`));
+                dispatch(setTopAmountAsNumber(isTopCardActive ? -otherCurrencyCalculated : otherCurrencyCalculated));
+                dispatch(setBotAmountAsNumber(isTopCardActive ? positiveAmont : -positiveAmont));
             }
         }
     }
 
+
     function onNewTopAmount(event: ChangeEvent<HTMLInputElement>) : void {
         event.preventDefault();
         const newValue : string = event.target.value;
-        const isTop = true;
-        handleAmounts(newValue, isTop);
+        const isComingFromTopCard = true;
+        handleAmounts(newValue, isComingFromTopCard);
     }
+
 
     function onNewBotAmount(event: ChangeEvent<HTMLInputElement>) : void {
         event.preventDefault();
         const newValue : string = event.target.value;
-        const isTop = false;
-        handleAmounts(newValue, isTop);
+        const isComingFromTopCard = false;
+        handleAmounts(newValue, isComingFromTopCard);
     }
+
 
     useEffect(
         () => {
@@ -122,6 +113,7 @@ export function useAmounts() : IUseAmountsResponse {
         },
         [ topCurrency, botCurrency, activeCard ],
     );
+
 
     return {
         topAmount,

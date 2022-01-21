@@ -1,32 +1,61 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { RootState } from "../store/store";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { replaceDotForCommaOf } from '../../utils/replaceDotForCommaOf/replaceDotForCommaOf';
+import { RootState } from '../store/store';
 
 interface IAmountsState {
     topAmount: string,
     botAmount: string,
 }
 
+
 const initialState: IAmountsState = {
     topAmount: '',
     botAmount: '',
 }
 
+
+function getAmountFormatted(amount : number) : string {
+    if (amount === 0) return '';
+
+    const amountToText = amount > 0
+        ? `+${amount}`
+        : amount.toString();
+    
+    return replaceDotForCommaOf(amountToText);
+}
+
+
 export const amountsSlice = createSlice({
     name: 'amounts',
     initialState,
     reducers: {
-        setTopAmount: (state, action: PayloadAction<string>) => {
-            state.topAmount = action.payload;
+        setTopAmountAsString: (state, action: PayloadAction<string>) => {
+            state.topAmount = replaceDotForCommaOf(action.payload);
         },
-        setBotAmount: (state, action: PayloadAction<string>) => {
-            state.botAmount = action.payload;
+        setBotAmountAsString: (state, action: PayloadAction<string>) => {
+            state.botAmount = replaceDotForCommaOf(action.payload);
         },
+        setTopAmountAsNumber: (state, action: PayloadAction<number>) => {
+            state.topAmount = getAmountFormatted(action.payload);
+
+        },
+        setBotAmountAsNumber: (state, action: PayloadAction<number>) => {
+            state.botAmount = getAmountFormatted(action.payload);
+
+        },
+        resetAmounts: (state) => {
+            state.topAmount = initialState.topAmount;
+            state.botAmount = initialState.botAmount;
+        }
     },
 });
+
 
 export const selectTopAmount = (state: RootState) => state.amounts.topAmount;
 export const selectBotAmount = (state: RootState) => state.amounts.botAmount;
 
-export const { setTopAmount, setBotAmount } = amountsSlice.actions;
+
+export const { setTopAmountAsString, setBotAmountAsString, setTopAmountAsNumber, setBotAmountAsNumber, resetAmounts } = amountsSlice.actions;
+
 
 export default amountsSlice.reducer;

@@ -1,11 +1,13 @@
 import { ChangeEvent } from 'react';
-import './currency-selector.css';
 import { Currencies } from '../../../redux/slices/currency-selectors.slices';
+import './currency-selector.css';
 
-export interface ICurrencySelectorProps {
+
+interface ICurrencySelectorProps {
     onChangeSelector: (event: ChangeEvent<HTMLSelectElement>) => void;
     currencyValue?: Currencies;
 }
+
 
 export function CurrencySelector(props: ICurrencySelectorProps) {
     const {
