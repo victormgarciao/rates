@@ -1,10 +1,5 @@
-import { eq as areEqual} from "lodash";
+const chars = new Set(['+', '-', '.', ',']);
 
 export function isLastDigitNotNumber(value: string) : boolean {
-    return( 
-        areEqual(value, '+')
-        || areEqual(value, '-')
-        || areEqual(value, '.')
-        || areEqual(value, ',')
-    );
-};
+    return chars.has(value);
+}

@@ -3,7 +3,7 @@ import { Main } from '../main';
 import { Provider } from 'react-redux';
 import { store } from '../../../../redux/store/store';
 import { setRates } from '../../../../redux/slices/rates.slice';
-import { resetCurrencyCards } from '../../../../redux/slices/currency-cards.slice';
+import { resetCurrencyCards, selectIsTopActiveCard } from '../../../../redux/slices/currency-cards.slice';
 import { Currencies, resetCurrencySelectors } from '../../../../redux/slices/currency-selectors.slices';
 import { resetAmounts } from '../../../../redux/slices/amounts.slice';
 
@@ -28,9 +28,9 @@ describe('main' , () => {
     function getAmountStates() {
         return store.getState().amounts;
     }
-
+    
     function getActiveCardStates() {
-        return store.getState().activeCard;
+        return selectIsTopActiveCard(store.getState());
     }
 
     beforeEach(() => resetStore());
@@ -147,15 +147,15 @@ describe('main' , () => {
             );
 
             const buttonElement = screen.getByRole('button');
-            expect(getActiveCardStates().isTopCardActive).toBe(true);
+            expect(selectIsTopActiveCard(store.getState())).toBe(true);
             
             // Click on Button
             fireEvent.click(buttonElement);
-            expect(getActiveCardStates().isTopCardActive).toBe(false);
+            expect(getActiveCardStates()).toBe(false);
             
             // Click on Button
             fireEvent.click(buttonElement);
-            expect(getActiveCardStates().isTopCardActive).toBe(true);
+            expect(getActiveCardStates()).toBe(true);
         });
 
         test('Change the value prefix of different amount values on click', () => {
@@ -172,7 +172,7 @@ describe('main' , () => {
             // Check amounts are emtpy and top card is active
             expect(getAmountStates().topAmount).toBe('');
             expect(getAmountStates().botAmount).toBe('');
-            expect(getActiveCardStates().isTopCardActive).toBe(true);
+            expect(getActiveCardStates()).toBe(true);
 
             // Set some value to topAmount
             fireEvent.change(topCurrencyInput, { target: { value: '33' } });
@@ -362,7 +362,7 @@ describe('main' , () => {
                     .querySelector('input');
             
             // Check Top card is active (so, bottom is not active)
-            expect(getActiveCardStates().isTopCardActive).toBe(true);
+            expect(getActiveCardStates()).toBe(true);
 
             // Let's set a value on top
             fireEvent.change(topInput, { target : { value: '33' } });
@@ -387,7 +387,7 @@ describe('main' , () => {
             );
             
             // Check top card is active
-            expect(getActiveCardStates().isTopCardActive).toBe(true);
+            expect(getActiveCardStates()).toBe(true);
 
             const topCurrencyInput: any = container
                 .querySelector('.TOP-card')!
@@ -407,7 +407,7 @@ describe('main' , () => {
             );
             
             // Check bottom card is not active
-            const isTopCardActive = store.getState().activeCard.isTopCardActive
+            const isTopCardActive = getActiveCardStates();
             expect(isTopCardActive).toBe(true);
 
             const bottomCurrencyInput: any = container

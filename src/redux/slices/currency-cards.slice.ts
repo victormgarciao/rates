@@ -10,13 +10,11 @@ export enum CurrencyCardType {
 
 interface ICurrencyCardsState {
     active: CurrencyCardType,
-    isTopCardActive: boolean,
 }
 
 
 const initialState: ICurrencyCardsState = {
     active: CurrencyCardType.TOP,
-    isTopCardActive: true,
 }
 
 
@@ -26,7 +24,6 @@ export const currencyCardsSlice = createSlice({
     reducers: {
         setActiveCard: (state, action: PayloadAction<CurrencyCardType>) => {
             state.active = action.payload;
-            state.isTopCardActive = action.payload === CurrencyCardType.TOP;
         },
         resetCurrencyCards: () => initialState,
     },
@@ -34,7 +31,8 @@ export const currencyCardsSlice = createSlice({
 
 
 export const selectActiveCard = (state: RootState) => state.activeCard.active;
-export const selectIsTopActiveCard = (state: RootState) => state.activeCard.isTopCardActive;
+// export const selectIsTopActiveCard = (state: RootState) => state.activeCard.isTopCardActive;
+export const selectIsTopActiveCard = (state: RootState) => state.activeCard.active === CurrencyCardType.TOP;
 
 
 export const { setActiveCard, resetCurrencyCards } = currencyCardsSlice.actions;
