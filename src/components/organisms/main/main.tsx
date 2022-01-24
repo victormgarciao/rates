@@ -1,5 +1,5 @@
 import { CurrencyCardType } from '../../../redux/slices/currency-cards.slice';
-import { CurrencyCard } from "../../molecules/currency-handler/currency-card";
+import { CurrencyCard } from "../../molecules/currency-card/currency-card";
 import { Header } from "../../atoms/header/header";
 import { useCurrencyCards } from '../../../hooks/use-currency-cards';
 import { useCurrencyCardsSelector } from '../../../hooks/use-currency-selectors';
