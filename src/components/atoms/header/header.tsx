@@ -1,5 +1,5 @@
 import './header.css';
 
 export function Header() {
-    return <div className='header'><h1>Rates Calculation</h1></div>
+    return <div className='header' data-testid='header'><h1>Rates Calculation</h1></div>
 }

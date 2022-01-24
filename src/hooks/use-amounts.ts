@@ -32,8 +32,7 @@ export function useAmounts() : IUseAmountsResponse {
     function getRateCalculation(fromCurrency: Currencies, toCurrency: Currencies, amount: number) : number {
         const fromRate = rates[fromCurrency];
         const toRate = rates[toCurrency];
-        const times = fromRate / toRate;
-        const fixedAmountCalculated = (amount * times).toFixed(2)
+        const fixedAmountCalculated = (amount / fromRate * toRate).toFixed(2)
         return Number(fixedAmountCalculated); // to avoid .00
     }
 

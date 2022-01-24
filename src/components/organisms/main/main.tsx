@@ -14,7 +14,7 @@ export function Main() {
     return (
         <div className='main' data-testid='main'>
             <Header />
-            <div className="cardsWrapper">
+            <div className="cardsWrapper" data-testid='cardsWrapper'>
                 <CurrencyCard
                     currencyValue={topCurrency}
                     amountValue={topAmount}

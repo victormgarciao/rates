@@ -11,27 +11,26 @@ async function getRatesRequest(): Promise<IRates> {
 }
 
 
-const mockRates = {
-    'EUR': 0.88154,
-    'GBP': 0.73355,
-};
-
-
 export function useInitApp(): void {
     const dispatch = useDispatch();
 
 
     function dispatchSetRates(rates: IRates) : void {
         const ratesWithDolarRate = { ...rates, USD: 1 };
-        // console.log(ratesWithDolarRate);
         dispatch(setRates(ratesWithDolarRate));
     }
 
 
     function setRatesToStore() : void {
+        getRatesRequest().then(dispatchSetRates);
+
+        // For testing purposes
+        // const mockRates = {
+        //     'EUR': 0.88154,
+        //     'GBP': 0.73355,
+        // };
         // console.log('YOU HAVE CALLED THE API');
-        // getRatesRequest().then(dispatchSetRates); // I AM MOCKING VALUE TO NOT GET THE LIMIT CALLS OF THE API
-        dispatchSetRates(mockRates);
+        // dispatchSetRates(mockRates);
     }
 
 

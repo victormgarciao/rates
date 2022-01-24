@@ -27,7 +27,8 @@ export const currencyCardsSlice = createSlice({
         setActiveCard: (state, action: PayloadAction<CurrencyCardType>) => {
             state.active = action.payload;
             state.isTopCardActive = action.payload === CurrencyCardType.TOP;
-        }
+        },
+        resetCurrencyCards: () => initialState,
     },
 });
 
@@ -36,7 +37,7 @@ export const selectActiveCard = (state: RootState) => state.activeCard.active;
 export const selectIsTopActiveCard = (state: RootState) => state.activeCard.isTopCardActive;
 
 
-export const { setActiveCard } = currencyCardsSlice.actions;
+export const { setActiveCard, resetCurrencyCards } = currencyCardsSlice.actions;
 
 
 export default currencyCardsSlice.reducer;

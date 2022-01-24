@@ -15,8 +15,6 @@ const initialState: IAmountsState = {
 
 
 function getAmountFormatted(amount : number) : string {
-    if (amount === 0) return '';
-
     const amountToText = amount > 0
         ? `+${amount}`
         : amount.toString();
@@ -43,10 +41,7 @@ export const amountsSlice = createSlice({
             state.botAmount = getAmountFormatted(action.payload);
 
         },
-        resetAmounts: (state) => {
-            state.topAmount = initialState.topAmount;
-            state.botAmount = initialState.botAmount;
-        }
+        resetAmounts: () => initialState,
     },
 });
 

@@ -29,6 +29,7 @@ export const currencySelectorsSlice = createSlice({
         setBotCurrency: (state, action: PayloadAction<Currencies>) => {
             state.botCurrency = action.payload;
         },
+        resetCurrencySelectors: () => initialState
     },
 });
 
@@ -37,7 +38,7 @@ export const selectTopCurrency = (state: RootState) => state.currenciySelectors.
 export const selectBotCurrency = (state: RootState) => state.currenciySelectors.botCurrency;
 
 
-export const { setTopCurrency, setBotCurrency } = currencySelectorsSlice.actions;
+export const { setTopCurrency, setBotCurrency, resetCurrencySelectors } = currencySelectorsSlice.actions;
 
 
 export default currencySelectorsSlice.reducer;

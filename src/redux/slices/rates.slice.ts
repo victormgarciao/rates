@@ -24,6 +24,7 @@ export const ratesSlice = createSlice({
         setRates: (state, action: PayloadAction<IRates>) => {
             state.data = action.payload;
         },
+        resetRates: () => initialState
     },
 });
 
@@ -31,7 +32,7 @@ export const ratesSlice = createSlice({
 export const selectRatesValues = (state: RootState) => state.rates.data;
 
 
-export const { setRates } = ratesSlice.actions;
+export const { setRates, resetRates } = ratesSlice.actions;
 
 
 export default ratesSlice.reducer;
