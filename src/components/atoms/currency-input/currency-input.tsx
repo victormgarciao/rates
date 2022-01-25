@@ -30,6 +30,7 @@ export function CurrencyInput(props: ICurrencySelectorProps) {
             inputMode='numeric'
             className='currency-input'
             placeholder='0'
+            data-testid='currency-input'
             value={amountValue || ''}
             onChange={onChangeAmount}
             onKeyDown={preventDeleteNotRemovableChars}

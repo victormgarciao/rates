@@ -21,6 +21,7 @@ export function CurrencySelector(props: ICurrencySelectorProps) {
             className='currency-selector'
             onChange={onChangeSelector}
             value={currencyValue}
+            data-testid='currency-selector'
         >
             <option>{Currencies.GBP}</option>
             <option>{Currencies.EUR}</option>

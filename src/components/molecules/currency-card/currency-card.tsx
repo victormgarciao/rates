@@ -27,6 +27,7 @@ export function CurrencyCard(props: ICurrencyCardProps) {
     return (
         <div
             className={`currency-card ${currencyCardType}-card`}
+            data-testid='currency-card'
         >
             <CurrencySelector
                 currencyValue={currencyValue}
