@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { CurrencySelector } from '../currency-selector';
-import { Currencies } from '../../../../redux/slices/currency-selectors.slices';
+import { Currencies } from '../../../../redux/slices/currency-cards.slice';
 
 describe('CurrencySelector' , () => {
     let onChangeSelector: (event: ChangeEvent<HTMLSelectElement>) => void = jest.fn();

@@ -1,9 +1,9 @@
 import './header.css';
 
-export function Header() {
+export function Header({ children, dataTestid }: { children: string, dataTestid: string }) {
     return (
-        <div className='header' data-testid='header'>
-            <h1>Rates Calculation</h1>
+        <div className='header' data-testid={dataTestid}>
+            <h1>{children}</h1>
         </div>
     );
 }

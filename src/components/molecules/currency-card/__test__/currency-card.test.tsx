@@ -1,8 +1,7 @@
 import { ChangeEvent } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { CurrencyCard } from '../currency-card';
-import { Currencies } from '../../../../redux/slices/currency-selectors.slices';
-import { CurrencyCardType } from '../../../../redux/slices/currency-cards.slice';
+import { Currencies, CurrencyCardType } from '../../../../redux/slices/currency-cards.slice';
 
 describe('CurrencyCard' , () => {
     let onChangeSelector: (event: ChangeEvent<HTMLSelectElement>) => void = jest.fn();

@@ -1,12 +1,12 @@
-.main {
+.exchange-screen {
     min-width: 300px;
 }
 
-.main .cardsWrapper {
+.exchange-screen .cardsWrapper {
     position: relative;
 }
 
-.main button {
+.exchange-screen button {
     padding: 10px;
     border-radius: 50%;
     height: 40px;
@@ -23,17 +23,17 @@
     transition: border 0.2s, width 0.2s, height 0.2s;
 }
 
-.main button:hover { 
+.exchange-screen button:hover { 
     border: 2px solid #eee;
     width: 50px;
     height: 50px;
 }
 
-.main button {
+.exchange-screen button {
     color: #1e90ff;
 }
 
-.main button.active i {
+.exchange-screen button.active i {
     transform: rotate(180deg);
-    transform-origin: 50% 37%;
+    transform-origin: 50% 50%;
 }

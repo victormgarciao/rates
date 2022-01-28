@@ -5,27 +5,27 @@ describe('Header' , () => {
 
     afterEach(() => cleanup());
 
-    test('Render the element', () => {
+    test('Render the element and has the data-testid we passed in', () => {
         render(
-            <Header />
+            <Header dataTestid='tupi-id'>Tupitupi</Header>
         );
-        const headerElement: HTMLDivElement = screen.getByTestId('header');
+        const headerElement: HTMLDivElement = screen.getByTestId('tupi-id');
         expect(headerElement).toBeInTheDocument();
     });
     
     test('It has header class', () => {
         render(
-            <Header />
+            <Header dataTestid='tupi-id'>Tupitupi</Header>
         );
-        const headerElement: HTMLDivElement = screen.getByTestId('header');
+        const headerElement: HTMLDivElement = screen.getByTestId('tupi-id');
         expect(headerElement).toHaveClass('header');
     });
     
-    test('It has header Heading', () => {
+    test('The text between tags is on the header Heading', () => {
         render(
-            <Header />
+            <Header dataTestid='tupi-id'>Tupitupi</Header>
         );
-        const headingElement: HTMLHeadingElement = screen.getByText('Rates Calculation');
+        const headingElement: HTMLHeadingElement = screen.getByText('Tupitupi');
         expect(headingElement).toBeInTheDocument();
     });
 });

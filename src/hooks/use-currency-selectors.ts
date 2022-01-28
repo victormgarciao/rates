@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { eq as areEqual } from 'lodash';
-import { Currencies, selectTopCurrency, selectBotCurrency, setTopCurrency, setBotCurrency } from '../redux/slices/currency-selectors.slices';
+import { Currencies, selectBottomCard, selectTopCard, setBottomCardCurrency, setTopCardCurrency } from '../redux/slices/currency-cards.slice';
 
 
 interface IUseActiveCardResponse {
@@ -14,8 +14,10 @@ interface IUseActiveCardResponse {
 
 export function useCurrencyCardsSelector() : IUseActiveCardResponse {
     const dispatch = useDispatch();
-    const topCurrency = useSelector(selectTopCurrency);
-    const botCurrency = useSelector(selectBotCurrency);
+    const topCard = useSelector(selectTopCard);
+    const bottomCard = useSelector(selectBottomCard);
+    const topCurrency = topCard.currency;
+    const botCurrency = bottomCard.currency;
 
 
     function isSameCurrencies(currency1: Currencies) : (a: Currencies) => boolean {
@@ -29,11 +31,11 @@ export function useCurrencyCardsSelector() : IUseActiveCardResponse {
         const isNewCurrencyEqualThan = isSameCurrencies(currency);
 
         if (isTopSelector) {
-            if (isNewCurrencyEqualThan(botCurrency)) dispatch(setBotCurrency(topCurrency));
-            dispatch(setTopCurrency(currency));
+            if (isNewCurrencyEqualThan(botCurrency)) dispatch(setBottomCardCurrency(topCurrency));
+            dispatch(setTopCardCurrency(currency));
         } else {
-            if (isNewCurrencyEqualThan(topCurrency)) dispatch(setTopCurrency(botCurrency));
-            dispatch(setBotCurrency(currency));
+            if (isNewCurrencyEqualThan(topCurrency)) dispatch(setTopCardCurrency(botCurrency));
+            dispatch(setBottomCardCurrency(currency));
         }
     }
 

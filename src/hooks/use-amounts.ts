@@ -1,13 +1,13 @@
 import { ChangeEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { eq as areEqual } from 'lodash';
-import { selectBotAmount, selectTopAmount, setBotAmountAsString, setBotAmountAsNumber, setTopAmountAsString, setTopAmountAsNumber, resetAmounts } from '../redux/slices/amounts.slice';
 import { selectRatesValues } from '../redux/slices/rates.slice';
-import { Currencies, selectBotCurrency, selectTopCurrency } from '../redux/slices/currency-selectors.slices';
-import { selectActiveCard, selectIsTopActiveCard } from '../redux/slices/currency-cards.slice';
+import { selectSellCardPosition, selectBottomCard, selectIsTopSellingCard, selectTopCard, setTopCardAmount, resetAmounts, setBottomCardAmount, resetIsExceeded, setTopCardIsExceeded, setBottomCardIsExceeded, Currencies } from '../redux/slices/currency-cards.slice';
 import { hasEndedWithDotOrComma } from '../utils/hasEndedWithDotOrComma/hasEndedWithDotOrComma';
 import { isLastDigitNotNumber } from '../utils/isLastDigitNotNumber/isLastDigitNotNumber';
 import { isRightFormatAmount } from '../utils/isRightFormatAmount/isRightFormatAmount';
+import { selectPockets } from '../redux/slices/pockets.slice';
+import { replaceDotForCommaOf } from '../utils/replaceDotForCommaOf/replaceDotForCommaOf';
 
 interface IUseAmountsResponse {
     topAmount: string,
@@ -19,14 +19,22 @@ interface IUseAmountsResponse {
 
 export function useAmounts() : IUseAmountsResponse {
     const dispatch = useDispatch();
+
+    const topCard = useSelector(selectTopCard);
+    const bottomCard = useSelector(selectBottomCard);
     
-    const topAmount = useSelector(selectTopAmount);
-    const botAmount = useSelector(selectBotAmount);
+    const topAmount = topCard.amount;
+    const botAmount = bottomCard.amount;
+
+    const topCurrency = topCard.currency;
+    const botCurrency = bottomCard.currency;
+
     const rates = useSelector(selectRatesValues);
-    const topCurrency = useSelector(selectTopCurrency);
-    const botCurrency = useSelector(selectBotCurrency);
-    const isTopCardActive = useSelector(selectIsTopActiveCard);
-    const activeCard = useSelector(selectActiveCard);
+
+    const isTopSellCard = useSelector(selectIsTopSellingCard);
+    const sellCardPosition = useSelector(selectSellCardPosition);
+
+    const pockets = useSelector(selectPockets);
 
 
     function getRateCalculation(fromCurrency: Currencies, toCurrency: Currencies, amount: number) : number {
@@ -46,8 +54,8 @@ export function useAmounts() : IUseAmountsResponse {
         }
 
         if (hasEndedWithDotOrComma(amount)) {
-            if (isComingFromTopCard) dispatch(setTopAmountAsString(amount));
-            else dispatch(setBotAmountAsString(amount));
+            if (isComingFromTopCard) dispatch(setTopCardAmount(replaceDotForCommaOf(amount)));
+            else dispatch(setBottomCardAmount(replaceDotForCommaOf(amount)));
 
             return false;
         }
@@ -56,13 +64,33 @@ export function useAmounts() : IUseAmountsResponse {
     }
 
 
+    function makeItPositive(value: string): number {
+        return Math.abs(Number(value.replace(',', '.')));
+    }
+
+
+    function getAmountFormatted(amount : number) : string {
+        const amountToText = amount > 0
+            ? `+${amount}`
+            : amount.toString();
+        
+        return replaceDotForCommaOf(amountToText);
+    }
+
+
     function handleAmounts(amount: string, isComingFromTopCard: boolean) : void {
         if (isNewAmountValid(amount, isComingFromTopCard)) {
             dispatch(resetAmounts());
-            const positiveAmont : number = Math.abs(Number(amount.replace(',', '.')));
+            dispatch(resetAmounts());
+            dispatch(resetIsExceeded());
 
+            const positiveAmont : number = makeItPositive(amount);
             if (isComingFromTopCard) {
-                const otherCurrencyCalculated : number = 
+                const amountFromPocket: number = makeItPositive(pockets[topCurrency].amount);
+
+                if (positiveAmont > amountFromPocket ) dispatch(setTopCardIsExceeded(true));
+
+                const otherCardCalculated : number = 
                     getRateCalculation(
                         topCurrency, 
                         botCurrency, 
@@ -70,10 +98,14 @@ export function useAmounts() : IUseAmountsResponse {
                     )
                 ;
 
-                dispatch(setTopAmountAsNumber(isTopCardActive ? -positiveAmont : positiveAmont));
-                dispatch(setBotAmountAsNumber(isTopCardActive ? otherCurrencyCalculated : -otherCurrencyCalculated));
+                dispatch(setTopCardAmount(getAmountFormatted(isTopSellCard ? -positiveAmont : positiveAmont)));
+                dispatch(setBottomCardAmount(getAmountFormatted(isTopSellCard ? otherCardCalculated : -otherCardCalculated)));
             } else {
-                const otherCurrencyCalculated : number =
+                const amountFromPocket: number = makeItPositive(pockets[botCurrency].amount);
+
+                if (positiveAmont > amountFromPocket ) dispatch(setBottomCardIsExceeded(true));
+
+                const otherCardCalculated : number = 
                     getRateCalculation(
                         botCurrency, 
                         topCurrency, 
@@ -81,8 +113,8 @@ export function useAmounts() : IUseAmountsResponse {
                     )
                 ;
 
-                dispatch(setTopAmountAsNumber(isTopCardActive ? -otherCurrencyCalculated : otherCurrencyCalculated));
-                dispatch(setBotAmountAsNumber(isTopCardActive ? positiveAmont : -positiveAmont));
+                dispatch(setTopCardAmount(getAmountFormatted(isTopSellCard ? -otherCardCalculated : otherCardCalculated)));
+                dispatch(setBottomCardAmount(getAmountFormatted(isTopSellCard ? positiveAmont : -positiveAmont)));
             }
         }
     }
@@ -90,27 +122,23 @@ export function useAmounts() : IUseAmountsResponse {
 
     function onNewTopAmount(event: ChangeEvent<HTMLInputElement>) : void {
         event.preventDefault();
-        const newValue : string = event.target.value;
-        const isComingFromTopCard = true;
-        handleAmounts(newValue, isComingFromTopCard);
+        handleAmounts(event.target.value, true);
     }
 
 
     function onNewBotAmount(event: ChangeEvent<HTMLInputElement>) : void {
         event.preventDefault();
-        const newValue : string = event.target.value;
-        const isComingFromTopCard = false;
-        handleAmounts(newValue, isComingFromTopCard);
+        handleAmounts(event.target.value, false);
     }
 
 
     useEffect(
         () => {
-            const amountToSend = isTopCardActive ? topAmount : botAmount;
+            const amountToSend = isTopSellCard ? topAmount : botAmount;
             const isAmountNotEmpty = !areEqual(amountToSend, '');
-            if(isAmountNotEmpty) handleAmounts(amountToSend, isTopCardActive);
+            if(isAmountNotEmpty) handleAmounts(amountToSend, isTopSellCard);
         },
-        [ topCurrency, botCurrency, activeCard ],
+        [ topCurrency, botCurrency, sellCardPosition ],
     );
 
 

@@ -6,4 +6,9 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    transition: background-color 0.5s;
+}
+
+.currency-card.exceeded {
+    background-color: darksalmon;
 }

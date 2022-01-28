@@ -1,15 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import ratesReducer from '../slices/rates.slice';
 import currencyCardsReducer from '../slices/currency-cards.slice';
-import amountsReducer from '../slices/amounts.slice';
-import currenciySelectorsReducer from '../slices/currency-selectors.slices';
+import pocketsReducer from '../slices/pockets.slice';
 
 export const store = configureStore({
     reducer: {
         rates: ratesReducer,
-        activeCard: currencyCardsReducer,
-        amounts: amountsReducer,
-        currenciySelectors: currenciySelectorsReducer
+        currencyCards: currencyCardsReducer,
+        pockets: pocketsReducer,
     },
 });
 

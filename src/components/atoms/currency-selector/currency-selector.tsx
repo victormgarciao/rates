@@ -1,5 +1,5 @@
 import { ChangeEvent } from 'react';
-import { Currencies } from '../../../redux/slices/currency-selectors.slices';
+import { Currencies } from '../../../redux/slices/currency-cards.slice';
 import './currency-selector.css';
 
 

@@ -1,32 +1,36 @@
 import { MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CurrencyCardType, selectActiveCard, selectIsTopActiveCard, setActiveCard } from "../redux/slices/currency-cards.slice";
+import { CurrencyCardType, ICard, selectBottomCard, selectIsTopSellingCard, selectTopCard, setSellCardPosition } from "../redux/slices/currency-cards.slice";
 
 interface IUseActiveCardResponse {
-    activeCard: CurrencyCardType,
     swapCurrencyCardActive: (e: MouseEvent<HTMLElement>) => void,
-    isTopCardActive: boolean,
+    isTopSellCard: boolean,
+    topCard: ICard,
+    bottomCard: ICard,
 }
 
 
 export function useCurrencyCards() : IUseActiveCardResponse {
     const dispatch = useDispatch();
 
-    const activeCard = useSelector(selectActiveCard);
-    const isTopCardActive = useSelector(selectIsTopActiveCard);
+    const isTopSellCard: boolean = useSelector(selectIsTopSellingCard);
+
+    const topCard = useSelector(selectTopCard);
+    const bottomCard = useSelector(selectBottomCard);
 
 
     function swapCurrencyCardActive(event: MouseEvent<HTMLElement>) : void {
         event.preventDefault();
 
-        if (isTopCardActive) dispatch(setActiveCard(CurrencyCardType.BOTTOM));
-        else dispatch(setActiveCard(CurrencyCardType.TOP));
+        if (isTopSellCard) dispatch(setSellCardPosition(CurrencyCardType.BOTTOM));
+        else dispatch(setSellCardPosition(CurrencyCardType.TOP));
     }
 
 
     return {
-        activeCard,
         swapCurrencyCardActive,
-        isTopCardActive,
+        isTopSellCard,
+        topCard,
+        bottomCard,
     };
 }

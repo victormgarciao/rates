@@ -1,6 +1,5 @@
 import { ChangeEvent } from 'react';
-import { CurrencyCardType } from '../../../redux/slices/currency-cards.slice';
-import { Currencies } from '../../../redux/slices/currency-selectors.slices';
+import { Currencies, CurrencyCardType } from '../../../redux/slices/currency-cards.slice';
 import { CurrencyInput } from '../../atoms/currency-input/currency-input';
 import { CurrencySelector } from '../../atoms/currency-selector/currency-selector';
 
@@ -12,6 +11,7 @@ interface ICurrencyCardProps {
     onChangeAmount: (event: ChangeEvent<HTMLInputElement>) => void;
     currencyCardType? : CurrencyCardType;
     amountValue?: string;
+    isExceeded?: boolean;
 }
 
 
@@ -22,11 +22,14 @@ export function CurrencyCard(props: ICurrencyCardProps) {
         currencyCardType = CurrencyCardType.TOP,
         amountValue,
         currencyValue,
+        isExceeded = false,
     } = props;
+
+    const exceededClass = isExceeded ? 'exceeded' : '';
 
     return (
         <div
-            className={`currency-card ${currencyCardType}-card`}
+            className={`currency-card ${currencyCardType}-card ${exceededClass}`}
             data-testid='currency-card'
         >
             <CurrencySelector
