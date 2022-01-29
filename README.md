@@ -15,30 +15,57 @@
                     - \__tests__
                     - header.tsx
                     - header.css
+                - pocket-left
+                    - \__tests__
+                    - pocket-left.tsx
+                    - pocket-left.css
+                - pocket-right
+                    - \__tests__
+                    - pocket-right.tsx
+                    - pocket-right.css
             - molecules
                 - currency-card (Card that will contain selector and input)
                     - \__tests__
                     - currency-card.tsx
                     - currency-card.css
+                - pocket (Card that will contain selector and input)
+                    - \__tests__
+                    - pocket.tsx
+                    - pocket.css
             - organisms
-                - main (Main components where the magic happens)
+                - main
                     - \__tests__
                     - main.tsx
                     - main.css
+                - exchange-screen
+                    - \__tests__
+                    - exchange-screen.tsx
+                    - exchange-screen.css
+                - pockets
+                    - \__tests__
+                    - pockets.tsx
+                    - pockets.css
         - hooks (Where the logic happens)
             - use-amounts.ts (for logic amount)
             - use-currency-cards.ts (for cards logic)
             - use-currency-selectors.ts (for selector logic)
-            - use-init.ts (for initialization logic)
+            - use-init-app.ts (for initialization logic)
+            - use-pockets.ts (for pockets logic)
         - redux (Here we will store the app data)
             - store
                 - store.tsx
             - slices (Redux toolkit library slices (reducers, actions, selectors inside))
-                -amount.slice.ts
                 -currency-cards.slice.ts
-                -currency-selectors.slice.ts
+                -pockets.slice.ts
                 -rates.slice.ts
+                -screens.slice.ts
         - utils (Some custom utils created to make us the life easier (and more readable))
+            - fixAvoiding0Decimals (Check if a string ends by a comma or dot)
+                - \__tests__
+                - fixAvoiding0Decimals.ts
+            - formatNumber (Check if a string ends by a comma or dot)
+                - \__tests__
+                - formatNumber.ts
             - hasEndedWithDotOrComma (Check if a string ends by a comma or dot)
                 - \__tests__
                 - hasEndedWithDotOrComma.ts
