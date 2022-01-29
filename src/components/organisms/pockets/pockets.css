@@ -5,3 +5,7 @@
     align-items: center;
     width: 100%;
 }
+
+.description{
+    text-align: left;
+}

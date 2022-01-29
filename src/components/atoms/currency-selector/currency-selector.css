@@ -1,6 +1,7 @@
 .currency-selector {
     border: none;
     font-size: 1.5em;
+    background-color: transparent;
 }
 
 .currency-selector:focus {

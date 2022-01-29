@@ -1,17 +1,20 @@
 .pocket {
     font-size: 1.5em;
-    background-color: #fff;
-    padding: 20px;
+    border: 2px solid #0984e3;
+    background-color: #0984e3;
+    color: #fff;
+    padding: 18px;
     margin: 10px 0;
     border-radius: 15px;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    opacity: 1;
-    transition: opacity 0.5s;
+    transition: background-color 0.5s, border 0.5s;
     cursor: pointer;
 }
 
 .pocket:hover {
-    opacity: 0.6;
+    background-color: #74b9ff;
+    border: 2px solid #0984e3;
+    padding: 18px;
 }

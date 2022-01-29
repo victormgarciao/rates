@@ -10,8 +10,6 @@ import { selectPockets } from '../redux/slices/pockets.slice';
 import { replaceDotForCommaOf } from '../utils/replaceDotForCommaOf/replaceDotForCommaOf';
 
 interface IUseAmountsResponse {
-    topAmount: string,
-    botAmount: string,
     onNewTopAmount: (e: ChangeEvent<HTMLInputElement>) => void,
     onNewBotAmount: (e: ChangeEvent<HTMLInputElement>) => void,
 }
@@ -82,14 +80,9 @@ export function useAmounts() : IUseAmountsResponse {
         if (isNewAmountValid(amount, isComingFromTopCard)) {
             dispatch(resetAmounts());
             dispatch(resetAmounts());
-            dispatch(resetIsExceeded());
 
             const positiveAmont : number = makeItPositive(amount);
             if (isComingFromTopCard) {
-                const amountFromPocket: number = makeItPositive(pockets[topCurrency].amount);
-
-                if (positiveAmont > amountFromPocket ) dispatch(setTopCardIsExceeded(true));
-
                 const otherCardCalculated : number = 
                     getRateCalculation(
                         topCurrency, 
@@ -101,10 +94,6 @@ export function useAmounts() : IUseAmountsResponse {
                 dispatch(setTopCardAmount(getAmountFormatted(isTopSellCard ? -positiveAmont : positiveAmont)));
                 dispatch(setBottomCardAmount(getAmountFormatted(isTopSellCard ? otherCardCalculated : -otherCardCalculated)));
             } else {
-                const amountFromPocket: number = makeItPositive(pockets[botCurrency].amount);
-
-                if (positiveAmont > amountFromPocket ) dispatch(setBottomCardIsExceeded(true));
-
                 const otherCardCalculated : number = 
                     getRateCalculation(
                         botCurrency, 
@@ -123,12 +112,23 @@ export function useAmounts() : IUseAmountsResponse {
     function onNewTopAmount(event: ChangeEvent<HTMLInputElement>) : void {
         event.preventDefault();
         handleAmounts(event.target.value, true);
+        
     }
 
 
     function onNewBotAmount(event: ChangeEvent<HTMLInputElement>) : void {
         event.preventDefault();
         handleAmounts(event.target.value, false);
+
+        if (isTopSellCard) {
+            const amountFromPocket: number = makeItPositive(pockets[topCurrency].amount);
+            const positiveTopAmount: number = makeItPositive(topAmount); 
+            if ( positiveTopAmount > amountFromPocket ) dispatch(setTopCardIsExceeded(true));
+        } else {
+            const amountFromPocket: number = makeItPositive(pockets[topCurrency].amount);
+            const positiveBotAmount: number = makeItPositive(botAmount); 
+            if ( positiveBotAmount > amountFromPocket ) dispatch(setBottomCardIsExceeded(true));
+        }
     }
 
 
@@ -142,9 +142,25 @@ export function useAmounts() : IUseAmountsResponse {
     );
 
 
+    useEffect(
+        () => {
+            dispatch(resetIsExceeded());
+            
+            if (isTopSellCard) {
+                const amountFromPocket: number = makeItPositive(pockets[topCurrency].amount);
+                const positiveTopAmount: number = makeItPositive(topAmount); 
+                if ( positiveTopAmount > amountFromPocket ) dispatch(setTopCardIsExceeded(true));
+            } else {
+                const amountFromPocket: number = makeItPositive(pockets[botCurrency].amount);
+                const positiveBotAmount: number = makeItPositive(botAmount); 
+                if ( positiveBotAmount > amountFromPocket ) dispatch(setBottomCardIsExceeded(true));
+            }
+        },
+        [ botAmount, topAmount ],
+    );
+
+
     return {
-        topAmount,
-        botAmount,
         onNewBotAmount,
         onNewTopAmount,
     };

@@ -5,11 +5,15 @@ import { useCurrencyCards } from '../../../hooks/use-currency-cards';
 import { useCurrencyCardsSelector } from '../../../hooks/use-currency-selectors';
 import { useAmounts } from '../../../hooks/use-amounts';
 import './exchange-screen.css';
+import { usePockets } from '../../../hooks/use-pockets';
 
 export function ExchangeScreen() {
     const { swapCurrencyCardActive, isTopSellCard, topCard, bottomCard } = useCurrencyCards();
     const { onNewBotAmount, onNewTopAmount } = useAmounts();
     const { onNewTopCurrency, onNewBotCurrency } = useCurrencyCardsSelector();
+    const { exchange, isExchangeDisabled } = usePockets();
+
+    const sellOrBuy: [ string, string ] = isTopSellCard ? ['Sell', 'to'] : ['Buy', 'from'];
  
     return (
         <div className='exchange-screen' data-testid='exchange-screen'>
@@ -28,6 +32,7 @@ export function ExchangeScreen() {
                 <button
                     className={`cta-transaction-direction ${isTopSellCard ? 'active' : ''}`}
                     onClick={swapCurrencyCardActive}
+                    data-testid='cta-swap-currencies'
                 >
                     <i className='fa fa-long-arrow-up' aria-hidden='true' />
                 </button>
@@ -41,6 +46,9 @@ export function ExchangeScreen() {
                     onChangeAmount={onNewBotAmount}
                 />
             </div>
+            <button className='cta-exchange' onClick={exchange} disabled={isExchangeDisabled}>
+                <span>{`${sellOrBuy[0]} ${topCard.currency} ${sellOrBuy[1]} ${bottomCard.currency}`}</span>
+            </button>
         </div>
     );
 }

@@ -27,6 +27,7 @@ export function Pockets() {
     return (
         <>
             <Header dataTestid='pockets-header'>Pockets</Header>
+            <p className='description'>Select a pocket to exchange</p>
             <div className='pockets' data-testid='pockets'>
                 {Object.entries(pockets).map(getPockets)}
             </div>

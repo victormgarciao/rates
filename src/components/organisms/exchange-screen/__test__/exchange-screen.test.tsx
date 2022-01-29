@@ -69,28 +69,28 @@ describe('ExchangeScreen' , () => {
             const cardsWrapperElement = screen.getByTestId('cardsWrapper');
             expect(cardsWrapperElement.childElementCount).toBe(3);
         });
-    })
-    
-    
-    describe('button behaviour', () => {
-        test('Renders the button component', () => {
-            render(
-                <Provider store={store}>
-                    <ExchangeScreen />
-                </Provider>
-            );
-            const buttonElement = screen.getByRole('button');
-            expect(buttonElement).toBeInTheDocument();
-        });
 
-        test('There is only 1 button', () => {
+        test('There are 2 buttons', () => {
             render(
                 <Provider store={store}>
                     <ExchangeScreen />
                 </Provider>
             );
             const buttonElementList = screen.getAllByRole('button');
-            expect(buttonElementList.length).toBe(1);
+            expect(buttonElementList.length).toBe(2);
+        });
+    })
+    
+    
+    describe('swap currencies button behaviour', () => {
+        test('Renders the swap currencies button component', () => {
+            render(
+                <Provider store={store}>
+                    <ExchangeScreen />
+                </Provider>
+            );
+            const buttonElement = screen.getByTestId('cta-swap-currencies');
+            expect(buttonElement).toBeInTheDocument();
         });
 
         test('has class cta-transaction-direction', () => {
@@ -99,27 +99,27 @@ describe('ExchangeScreen' , () => {
                     <ExchangeScreen />
                 </Provider>
             );
-            const buttonElement = screen.getByRole('button');
+            const buttonElement = screen.getByTestId('cta-swap-currencies');
             expect(buttonElement).toHaveClass('cta-transaction-direction');
         });
 
-        test('button has class active by default', () => {
+        test('swap currencies button has class active by default', () => {
             render(
                 <Provider store={store}>
                     <ExchangeScreen />
                 </Provider>
             );
-            const buttonElement = screen.getByRole('button');
+            const buttonElement = screen.getByTestId('cta-swap-currencies');
             expect(buttonElement).toHaveClass('active');
         });
 
-        test('Toggles class active on button when click it', () => {
+        test('Toggles class active on swap currencies button when click it', () => {
             render(
                 <Provider store={store}>
                     <ExchangeScreen />
                 </Provider>
             );
-            const buttonElement = screen.getByRole('button');
+            const buttonElement = screen.getByTestId('cta-swap-currencies');
             expect(buttonElement).toHaveClass('active');
 
             // Click on Button
@@ -131,14 +131,14 @@ describe('ExchangeScreen' , () => {
             expect(buttonElement).toHaveClass('active');
         });
 
-        test('Toggles isTopCardActive state on button when click it', async () => {
+        test('Toggles isTopCardActive state on swap currencies button when click it', async () => {
             render(
                 <Provider store={store}>
                     <ExchangeScreen />
                 </Provider>
             );
 
-            const buttonElement = screen.getByRole('button');
+            const buttonElement = screen.getByTestId('cta-swap-currencies');
             expect(selectIsTopSellingCard(store.getState())).toBe(true);
             
             // Click on Button
@@ -175,7 +175,7 @@ describe('ExchangeScreen' , () => {
             expect(getCurrencyCardsStates().topCard.amount.startsWith('-')).toBe(true);
             expect(getCurrencyCardsStates().bottomCard.amount.startsWith('+')).toBe(true);
 
-            const buttonElement = screen.getByRole('button');
+            const buttonElement = screen.getByTestId('cta-swap-currencies');
             
             // Click on Button
             fireEvent.click(buttonElement);
@@ -194,7 +194,7 @@ describe('ExchangeScreen' , () => {
             expect(getCurrencyCardsStates().topCard.amount).toBe('');
             expect(getCurrencyCardsStates().bottomCard.amount).toBe('');
 
-            const buttonElement = screen.getByRole('button');
+            const buttonElement = screen.getByTestId('cta-swap-currencies');
             
             // Click on Button
             fireEvent.click(buttonElement);

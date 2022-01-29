@@ -6,7 +6,7 @@
     position: relative;
 }
 
-.exchange-screen button {
+.exchange-screen button.cta-transaction-direction {
     padding: 10px;
     border-radius: 50%;
     height: 40px;
@@ -23,17 +23,40 @@
     transition: border 0.2s, width 0.2s, height 0.2s;
 }
 
-.exchange-screen button:hover { 
+.exchange-screen button.cta-transaction-direction:hover { 
     border: 2px solid #eee;
     width: 50px;
     height: 50px;
 }
 
-.exchange-screen button {
-    color: #1e90ff;
+.exchange-screen button.cta-transaction-direction {
+    color: #0984e3;
 }
 
-.exchange-screen button.active i {
+.exchange-screen button.cta-transaction-direction.active i {
     transform: rotate(180deg);
     transform-origin: 50% 50%;
+}
+
+.exchange-screen button.cta-exchange {
+    padding: 13px 18px;
+    border: 2px solid #0984e3;
+    background-color: #0984e3;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.5s, border 0.5s;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 1.2em;
+}
+
+.exchange-screen button.cta-exchange:hover {
+    background-color: #74b9ff;
+}
+
+.exchange-screen button.cta-exchange:disabled {
+    background-color: #dfe6e9;
+    border: 2px solid #b2bec3;
+    color: #b2bec3;
+    cursor: default;
 }
