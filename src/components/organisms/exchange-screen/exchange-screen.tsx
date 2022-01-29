@@ -9,7 +9,7 @@ import { usePockets } from '../../../hooks/use-pockets';
 
 export function ExchangeScreen() {
     const { swapCurrencyCardActive, isTopSellCard, topCard, bottomCard } = useCurrencyCards();
-    const { onNewBotAmount, onNewTopAmount } = useAmounts();
+    const { onNewBotAmount, onNewTopAmount, openPocketScreen } = useAmounts();
     const { onNewTopCurrency, onNewBotCurrency } = useCurrencyCardsSelector();
     const { exchange, isExchangeDisabled } = usePockets();
 
@@ -18,6 +18,7 @@ export function ExchangeScreen() {
     return (
         <div className='exchange-screen' data-testid='exchange-screen'>
             <Header dataTestid='exchange-screen-header' >Rates Calculation</Header>
+            <p className='back-link' onClick={openPocketScreen}>Back</p>
             <div className="cardsWrapper" data-testid='cardsWrapper'>
                 <CurrencyCard
                     currencyValue={topCard.currency}

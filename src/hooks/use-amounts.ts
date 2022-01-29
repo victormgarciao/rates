@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect } from 'react';
+import { ChangeEvent, MouseEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { eq as areEqual } from 'lodash';
 import { selectRatesValues } from '../redux/slices/rates.slice';
@@ -8,10 +8,13 @@ import { isLastDigitNotNumber } from '../utils/isLastDigitNotNumber/isLastDigitN
 import { isRightFormatAmount } from '../utils/isRightFormatAmount/isRightFormatAmount';
 import { selectPockets } from '../redux/slices/pockets.slice';
 import { replaceDotForCommaOf } from '../utils/replaceDotForCommaOf/replaceDotForCommaOf';
+import { setIsPocketsScreen } from '../redux/slices/screens.slice';
+import { fixAvoiding0Decimals } from '../utils/fixAvoiding0Decimals/fixAvoiding0Decimals';
 
 interface IUseAmountsResponse {
     onNewTopAmount: (e: ChangeEvent<HTMLInputElement>) => void,
     onNewBotAmount: (e: ChangeEvent<HTMLInputElement>) => void,
+    openPocketScreen: (event: MouseEvent<HTMLElement>) => void
 }
 
 
@@ -38,8 +41,8 @@ export function useAmounts() : IUseAmountsResponse {
     function getRateCalculation(fromCurrency: Currencies, toCurrency: Currencies, amount: number) : number {
         const fromRate = rates[fromCurrency];
         const toRate = rates[toCurrency];
-        const fixedAmountCalculated = (amount / fromRate * toRate).toFixed(2)
-        return Number(fixedAmountCalculated); // to avoid .00
+        const fixedAmountCalculated = fixAvoiding0Decimals(amount / fromRate * toRate);
+        return Number(fixedAmountCalculated);
     }
 
 
@@ -160,8 +163,15 @@ export function useAmounts() : IUseAmountsResponse {
     );
 
 
+    function openPocketScreen(event: MouseEvent<HTMLElement>): void {
+        event.preventDefault();
+        dispatch(setIsPocketsScreen(true));
+    }
+
+
     return {
         onNewBotAmount,
         onNewTopAmount,
+        openPocketScreen,
     };
 }

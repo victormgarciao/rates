@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import ratesReducer from '../slices/rates.slice';
 import currencyCardsReducer from '../slices/currency-cards.slice';
 import pocketsReducer from '../slices/pockets.slice';
+import screensReducer from '../slices/screens.slice';
 
 export const store = configureStore({
     reducer: {
         rates: ratesReducer,
         currencyCards: currencyCardsReducer,
         pockets: pocketsReducer,
+        screens: screensReducer,
     },
 });
 

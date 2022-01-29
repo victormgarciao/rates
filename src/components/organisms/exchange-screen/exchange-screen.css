@@ -1,9 +1,11 @@
-.exchange-screen {
-    min-width: 300px;
-}
-
 .exchange-screen .cardsWrapper {
     position: relative;
+}
+
+.exchange-screen .back-link {
+    text-align: left;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .exchange-screen button.cta-transaction-direction {

@@ -1,8 +1,11 @@
-import { eq } from 'lodash';
+import { eq as areEqual } from 'lodash';
 import { MouseEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Currencies, resetAmounts, resetCurrencyCards, selectBottomCard, selectTopCard, setBottomCardCurrency, setTopCardCurrency } from '../redux/slices/currency-cards.slice';
 import { IPocketsState, selectPockets, setPocketAmount } from '../redux/slices/pockets.slice';
+import { setIsPocketsScreen } from '../redux/slices/screens.slice';
+import { fixAvoiding0Decimals } from '../utils/fixAvoiding0Decimals/fixAvoiding0Decimals';
+import { formatNumber } from '../utils/formatNumber/formatNumber';
 import { replaceDotForCommaOf } from '../utils/replaceDotForCommaOf/replaceDotForCommaOf';
 
 interface IUsePocketsResponse {
@@ -54,8 +57,10 @@ export function usePockets(): IUsePocketsResponse {
 
             dispatch(setTopCardCurrency(currency));
             dispatch(setBottomCardCurrency(
-                eq(currency, Currencies.USD) ? Currencies.EUR : Currencies.USD)
+                areEqual(currency, Currencies.USD) ? Currencies.EUR : Currencies.USD)
             );
+
+            dispatch(setIsPocketsScreen(false));
         }
     };
 
@@ -66,11 +71,22 @@ export function usePockets(): IUsePocketsResponse {
         event.preventDefault();
         dispatch(resetAmounts());
 
-        const topResult = Number(topPocketAmount.replace(',', '.')) + Number(topCardAmount.replace(',', '.'));
-        const botResult = Number(botPocketAmount.replace(',', '.')) + Number(botCardAmount.replace(',', '.'));
+        const topResult = formatNumber(topPocketAmount) + formatNumber(topCardAmount);
+        const botResult = formatNumber(botPocketAmount) + formatNumber(botCardAmount);
 
-        dispatch(setPocketAmount({ currency: topCurrency, amount: replaceDotForCommaOf(Number(topResult.toFixed(2)).toString())}))
-        dispatch(setPocketAmount({ currency: botCurrency, amount: replaceDotForCommaOf(Number(botResult.toFixed(2)).toString())}))
+        const fixAmount: (a: number) => string = 
+            (amount) => replaceDotForCommaOf(fixAvoiding0Decimals(amount));
+
+        dispatch(setPocketAmount({
+            currency: topCurrency,
+            amount: fixAmount(topResult), 
+        }));
+        dispatch(setPocketAmount({
+            currency: botCurrency,
+            amount: fixAmount(botResult),
+        }));
+
+        dispatch(setIsPocketsScreen(true));
     };
 
 
